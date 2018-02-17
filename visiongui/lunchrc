@@ -1,0 +1,2 @@
+add_command( "/usr/bin/python /home/pi/dreadbots/visiongui/dreadbotVisionGui.py" )
+add_command( "/usr/bin/python /home/pi/dreadbots/visiongui/calibrate.py" )

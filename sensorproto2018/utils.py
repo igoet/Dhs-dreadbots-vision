@@ -1,0 +1,81 @@
+
+from __future__ import print_function
+
+import time
+import datetime
+import cv2
+import os
+import os.path
+
+"""
+Common methods and classes useful across the project.
+"""
+
+def secofday(dt):
+    """Given a datetime object return the number of seconds of the day that datetime occurs."""
+
+    return dt.hour*3600 + dt.minute*60 + dt.second
+
+def saveImageTask(parms):
+    """Helper method for saving an image from the camera. Callable from a thread in a threadpool."""
+
+    rawimage = parms.get( "rawimage" )
+    annotated = parms.get( "annotated" )
+    imgdir = parms.get( "imgdir" )
+    debug = parms.get( "debug" )
+
+    if not(imgdir):
+        now = datetime.datetime.now()
+        seconds = secofday( now )
+        imgdir = os.path.join( imgdir, "%s" % now.year, "%02d" % now.month, "%02d" % now.day, "%s" % seconds )
+
+    if not(os.path.exists( imgdir ) ):
+        os.makedirs( imgdir )
+
+    rawfile = os.path.join( imgdir, "raw.jpg" )
+    annotatedfile = os.path.join( imgdir, "annotated.jpg" )
+
+    cv2.imwrite( rawfile, rawimage )
+    cv2.imwrite( annotatedfile, annotated )
+
+    if debug:
+        print( "images written to %s" % imgdir )
+    
+
+class Contour(object):
+    """Model for representing a contour found by opencv. Facilitates making the data slightly easier to send to the network tables."""
+    def __init__(self, numpyNdarray ):
+        self.area = None
+        self.cx = None
+        self.cy = None
+        self.array = numpyNdarray
+        self.br = cv2.boundingRect( self.array )
+        (brx, bry, brw, brh) = self.br
+        self.area =  brh * brw
+        self.cx = brx + brw / 2
+        self.cy = bry + brh / 2
+
+    def __repr__(self):
+        c = self
+        print( "  contour cx=%s cy=%s, area=%s" % (c.cx, c.cy, c.area) )
+
+        
+
+class Timer(object):
+    """Timer object. Useful for keeping tabs on the performance of the code."""
+    
+    def __init__(self, name):
+        self.name = name
+        self.t1 = time.time()
+        self.t2 = None
+        pass
+
+    def start(self):
+        self.t1 = time.time()
+
+    def stop(self):
+        self.t2 = time.time()
+
+    def show(self):
+        print( "%s: %4.4f" % ( self.name, (self.t2-self.t1) ) )
+#|

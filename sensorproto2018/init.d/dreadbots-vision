@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Script to initialize Dreadbot vision on boot up
+
+### BEGIN INIT INFO
+# Provides:          <your script name>
+# Required-Start:    $all
+# Required-Stop:
+# Default-Start:     3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manage my cool stuff
+### END INIT INFO
+
+
+method=$1
+case $method in
+
+start)
+    mkdir -p /var/tmp/images/
+    /sbin/mke2fs -m 0 /dev/ram0
+    /bin/mount /dev/ram0 /var/tmp/images # -o uid=1000     
+    touch /var/tmp/images/currentImage.jpg
+    chown -R pi /var/tmp/images/
+    rm -f /tmp/lunch*
+    su -c /home/pi/vision-start.sh pi
+    ;;
+
+stop)
+  killall -v -u pi python
+  sleep 2
+  killall -v -9 -u pi python
+  ;;
+
+esac

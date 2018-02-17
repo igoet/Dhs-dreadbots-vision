@@ -1,0 +1,46 @@
+
+import engine
+
+class DreadbotYellowboxSensor(object):
+    def __init__(self, pipeline):
+        self.pipeline = pipeline
+    pass
+
+class DreadbotAutolineSensor(object):
+    def __init__(self, pipeline):
+        self.pipeline = pipeline
+    pass
+
+class SensorFactory(object):
+    """Given a target name return the appropriate grip piplein."""
+
+    def getSensor(self):
+        gpf = GripPipelineFactory()
+        pipeline = gpf.getGripPipeline(target)        
+        if target == "yellowbox":
+            return DreadbotYellowboxSensor(pipeline)
+        if target == "autoline":
+            return DreadbotAutolineSensor(pipeline)
+        return None
+            
+
+
+class GripPipelineFactory(object):
+    """Given a target name return the appropriate grip piplein."""
+
+    def getGripPipeline(self, target):
+        if target == "yellowbox":
+            from yellowboxgrip import GripPipeline
+
+            return GripPipeline()
+        if target == "autoline":
+            from autolinegrip import GripPipeline
+
+            return GripPipeline()
+
+        return None
+        
+
+if __name__ == "__main__":
+    sf = SensorFactory()
+    engine.main(sf)

@@ -1,0 +1,76 @@
+git@github.com:Dreadbot/Dreadbot-VII.git
+
+==============================================================================
+Mon Jan 23 18:02:38 EST 2017
+==============================================================================
+
+HSV Sample Values of tape when lit.
+
+H,S,V
+178,33,95
+178,55,96
+179,46,91
+179,63,93
+179,52,95
+
+177,29,96
+179,37,95
+177,34,94
+168,17,92
+177,29,97
+
+01/30/2017
+
+H,S,V
+100,2,67
+
+
+
+==============================================================================
+Sun Jan 22 18:02:23 EST 2017
+==============================================================================
+
+
+Trying to enable a low latency camera video solution.
+
+This works! .. but is very Linux centric.
+
+http://www.wumpus-cave.net/2015/11/06/low-latency-fpv-streaming-with-the-raspberry-pi/
+
+sudo apt-get install gstreamer1.0-tools
+
+gst-launch-1.0 rpicamsrc bitrate=1000000 \
+    ! 'video/x-h264,width=640,height=480' \
+    ! h264parse \
+    ! queue \
+    ! rtph264pay config-interval=1 pt=96 \
+    ! gdppay \
+    ! udpsink host=192.168.1.10 port=5000
+
+Install rpicamsrc
+
+https://github.com/thaytan/gst-rpicamsrc
+
+apt-get install autoconf automake libtool pkg-config libgstreamer1.0-dev \
+ libgstreamer-plugins-base1.0-dev libraspberrypi-dev
+
+mkdir -p ~/src/
+mkdir ~/src/
+git clone https://github.com/thaytan/gst-rpicamsrc
+
+./autogen.sh --prefix=/usr --libdir=/usr/lib/arm-linux-gnueabihf/
+make
+sudo make install
+
+== Less Linux Centric ==
+
+Works with mplayer. And works pretty well!
+
+Raspberry PI
+raspivid  -w 320 -h 240 -t 0 -fps 20 -b 1000000 -o - | nc -l -p 5001 -k
+
+Receiver
+nc 192.168.1.159 5001 | mplayer -fps 60 -demuxer h264es -
+
+
+
