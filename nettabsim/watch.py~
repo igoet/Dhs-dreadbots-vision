@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+# pip install pynetworktables
+
+from networktables import NetworkTables
+
+NetworkTables.enableVerboseLogging()
+NetworkTables.initialize(server='roborio-3656-frc.local')
+
+# It takes a minute for network tables to initialize
+t1=time.time()
+timeout=15
+now=time.time()
+while not(NetworkTables.isConnected()) and (now-t1)<timeout:
+      print("..")
+      now=time.time()
+      time.sleep( 1 )

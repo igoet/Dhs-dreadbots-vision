@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Script to initialize Dreadbot vision on boot up
+
+method=$1
+case $method in
+
+start)
+	mkdir -p /var/tmp/images/
+	touch /var/tmp/images/currentImage.jpg		
+	chown -R pi /var/tmp/images/
+	rm -f /tmp/lunch*
+  su -c /home/pi/vision-start.sh pi
+  ;;
+
+stop)
+  killall -v -u pi python
+  sleep 2
+  killall -v -9 -u pi python
+  ;;
+
+esac
